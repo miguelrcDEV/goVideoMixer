@@ -5,10 +5,16 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
+	"github.com/common-nighthawk/go-figure"
 	"log"
 	"net/http"
 	"os"
 )
+
+func printName(){
+	myFigure := figure.NewFigure("MIZO", "", true)
+  	myFigure.Print()
+}
 
 func main() {
 	err := godotenv.Load()
@@ -31,6 +37,7 @@ func main() {
 	handler := cors.Default().Handler(router)
 
 	fmt.Printf("Starting server on %v with stringPort %v\n", port, stringPort)
+	printName()
 
 	http.ListenAndServe(stringPort, handler)
 
