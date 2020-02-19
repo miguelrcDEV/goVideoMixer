@@ -1,2 +1,2 @@
 # goVideoMixer
-Go REST API to mix videos into only one with ffmpeg
+Go REST API that merge video chunks(.ts files) of a hls live streaming into only one video.

@@ -1,0 +1,15 @@
+version: '3'
+services:
+    rivugo:
+      image: "councilbox/goVideoMixer:1.0.0"
+      container_name: "goVideoMixer"
+      network_mode: "host"
+      ports:
+        - "8020:8020"
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - /home/councilbox/rivu-media:/home/councilbox/rivu-media
+      environment:
+        - PORT=8020
+        - MEDIA_PATH=/home/councilbox/rivu-media
+      restart: unless-stopped
