@@ -7,6 +7,7 @@ RUN go get github.com/joho/godotenv
 RUN go get github.com/rs/cors
 RUN go get github.com/gorilla/mux
 RUN go get github.com/xfrr/goffmpeg/transcoder
+RUN go get github.com/common-nighthawk/go-figure
 
 # Set necessary environmet variables needed for our image
 ENV CGO_ENABLED=0 \
