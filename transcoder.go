@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
@@ -51,6 +52,7 @@ func joinTsFiles(inputPath string, mergePath string) []byte {
 }
 
 func transcode(inputPath string, outputPath string) {
+	t1 := time.Now()
 	allTsPath := fmt.Sprintf("%s/%s", inputPath, mergeTSFilename)
 
 	deleteFile(allTsPath)
@@ -90,7 +92,11 @@ func transcode(inputPath string, outputPath string) {
 		//log.Println("SPEED " + progressValues.Speed)
 	}
 
-	log.Println("TRANSCODING DONE")
+	t2 := time.Now()
+	diff := t2.Sub(t1)
+	log.Printf("TRANSCODING DONE IN %d HOURS, %d MINUTES, %d SECONDS", int(diff.Hours()), int(diff.Minutes()), int(diff.Seconds()))
+
+	deleteFile(allTsPath)
 
 	// This channel is used to wait for the transcoding process to end
 	err = <-done
