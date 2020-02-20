@@ -33,7 +33,7 @@ func joinTsFiles(inputPath string) []byte {
 	mergedCount := 0
 	filepath.Walk(inputPath, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".ts") {
-			println("concatenating " + path + " ...")
+			//println("concatenating " + path + " ...")
 			b, err := ioutil.ReadFile(path)
 			if err != nil {
 				return err
@@ -75,7 +75,7 @@ func transcode(inputPath string, outputPath string) {
 	for progressValues := range progress {
 		/*log.Println(progressValues.Progress)
 		log.Println(float32(progressValues.Progress))*/
-		DrawProgressBar("Merge .ts files", float32(progressValues.Progress)/100, progressWidth)
+		DrawProgressBar("Transcoding", float32(progressValues.Progress)/100, progressWidth)
 		/*log.Println("FRAMES " + progressValues.FramesProcessed)
 		log.Println("CURRENT TIME " + progressValues.CurrentTime)
 		log.Println("CURRENT BITRATE " + progressValues.CurrentBitrate)
