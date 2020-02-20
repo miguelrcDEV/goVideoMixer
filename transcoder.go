@@ -17,7 +17,7 @@ const (
 	progressWidth   = 40
 )
 
-func joinTsFiles(inputPath string) []byte {
+func joinTsFiles(inputPath string, mergePath string) []byte {
 	var allTs []byte
 
 	totalTsFiles := 0
@@ -38,7 +38,9 @@ func joinTsFiles(inputPath string) []byte {
 			if err != nil {
 				return err
 			}
-			allTs = append(allTs, b...)
+
+			appendBytes(mergePath, b)
+			//allTs = append(allTs, b...)
 
 			mergedCount++
 			DrawProgressBar("Merge .ts files", float32(mergedCount)/float32(totalTsFiles), progressWidth)
@@ -51,9 +53,15 @@ func joinTsFiles(inputPath string) []byte {
 func transcode(inputPath string, outputPath string) {
 	allTsPath := fmt.Sprintf("%s/%s", inputPath, mergeTSFilename)
 
-	allTs := joinTsFiles(inputPath)
+	deleteFile(allTsPath)
+	createFile(allTsPath)
+
+	//allTs := joinTsFiles(inputPath, allTsPath)
+	//log.Println("ALL TS FILE PATH" + allTsPath)
+	//ioutil.WriteFile(allTsPath, allTs, 0644)
+
+	joinTsFiles(inputPath, allTsPath)
 	log.Println("ALL TS FILE PATH" + allTsPath)
-	ioutil.WriteFile(allTsPath, allTs, 0644)
 
 	// Create new instance of transcoder
 	trans := new(transcoder.Transcoder)
@@ -73,13 +81,13 @@ func transcode(inputPath string, outputPath string) {
 
 	// Example of printing transcoding progress
 	for progressValues := range progress {
-		/*log.Println(progressValues.Progress)
-		log.Println(float32(progressValues.Progress))*/
+		//log.Println(progressValues.Progress)
+		//log.Println(float32(progressValues.Progress))
 		DrawProgressBar("Transcoding", float32(progressValues.Progress)/100, progressWidth)
-		/*log.Println("FRAMES " + progressValues.FramesProcessed)
-		log.Println("CURRENT TIME " + progressValues.CurrentTime)
-		log.Println("CURRENT BITRATE " + progressValues.CurrentBitrate)
-		log.Println("SPEED " + progressValues.Speed)*/
+		//log.Println("FRAMES " + progressValues.FramesProcessed)
+		//log.Println("CURRENT TIME " + progressValues.CurrentTime)
+		//log.Println("CURRENT BITRATE " + progressValues.CurrentBitrate)
+		//log.Println("SPEED " + progressValues.Speed)
 	}
 
 	log.Println("TRANSCODING DONE")
