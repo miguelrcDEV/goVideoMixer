@@ -1,40 +1,41 @@
 package main
 
 import (
-	"encoding/json"
-	"io"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 type streaming struct {
 	Name string `json:"name"`
 }
 
-func health(w http.ResponseWriter, r *http.Request) {
-	// A very simple health check.
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-
-	io.WriteString(w, `{"alive": true}`)
+func health(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"alive": "true",
+	})
 }
 
-func transcodeStreaming(w http.ResponseWriter, r *http.Request) {
+func transcodeStreaming(context *gin.Context) {
 	var newStreaming streaming
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	json.Unmarshal(reqBody, &newStreaming)
-	log.Println(newStreaming)
-	log.Println(newStreaming.Name)
+	name := context.PostForm("name")
+	newStreaming.Name = name
 
 	mediaPath := os.Getenv("MEDIA_PATH")
 	inputPath := mediaPath + "/" + newStreaming.Name
 	outputPath := mediaPath + "/" + newStreaming.Name + "/" + newStreaming.Name + ".mp4"
 
-	transcode(inputPath, outputPath)
+	log.Printf("INPUT PATH => %v", inputPath)
+	log.Printf("OUTPUT PATH => %v", outputPath)
+
+	existsInputDir := ExistsDir(inputPath)
+
+	if existsInputDir {
+		transcode(inputPath, outputPath)
+	} else {
+		context.JSON(404, gin.H{
+			"NOT_FOUND": "Dir for " + name,
+		})
+	}
 }

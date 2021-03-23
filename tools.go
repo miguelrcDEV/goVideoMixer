@@ -2,8 +2,15 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
+
+func ExistsDir(path string) bool {
+	_, err := os.Stat(path)
+	exists := err == nil
+	return exists
+}
 
 func DrawProgressBar(prefix string, proportion float32, width int, suffix ...string) {
 	pos := int(proportion * float32(width))

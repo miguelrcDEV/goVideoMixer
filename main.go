@@ -2,18 +2,18 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
-	"github.com/rs/cors"
-	"github.com/common-nighthawk/go-figure"
 	"log"
-	"net/http"
 	"os"
+
+	"github.com/common-nighthawk/go-figure"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
-func printName(){
-	myFigure := figure.NewFigure("MIZO", "", true)
-  	myFigure.Print()
+func printName() {
+	myFigure := figure.NewFigure("MERGETS", "", true)
+	myFigure.Print()
 }
 
 func main() {
@@ -28,19 +28,19 @@ func main() {
 	mediaPath := os.Getenv("MEDIA_PATH")
 	fmt.Printf("Media path on %v\n", mediaPath)
 
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/health", health)
-	router.HandleFunc("/transcode", transcodeStreaming).Methods("POST")
+	// SETUP API
+	router := gin.Default()
+	router.Use(gin.Recovery()) // Recovery middleware recovers from any panics and writes a 500 if there was one.
+	router.Use(cors.Default())
 
-	// cors.Default() setup the middleware with default options being
-	// all origins accepted with simple methods (GET, POST).
-	handler := cors.Default().Handler(router)
+	api := router.Group("/api")
+	{
+		api.GET("/health", health)
+		api.POST("/transcode", transcodeStreaming)
+	}
 
-	fmt.Printf("Starting server on %v with stringPort %v\n", port, stringPort)
 	printName()
+	log.Printf("Media path is %s\n", mediaPath)
 
-	http.ListenAndServe(stringPort, handler)
-
-	// serve and log errors
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", port), nil))
+	router.Run(stringPort)
 }
